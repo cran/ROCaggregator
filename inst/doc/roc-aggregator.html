@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Pedro Mateus" />
+
+
+<title>ROCaggregator use case</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">ROCaggregator use case</h1>
+<h4 class="author">Pedro Mateus</h4>
+
+
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>The ROCaggregator package allows you to aggregate multiple ROC (Receiver Operating Characteristic) curves. One of the scenarios where it can be helpful is in federated learning. Evaluating a model using the ROC AUC (Area Under the Curve) in a federated learning scenario will require to evaluating the model against data from different sites. This will eventually lead to partial ROCs from each site which can be aggregated to obtain a global metric to evaluate the model.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROCaggregator)</span></code></pre></div>
+</div>
+<div id="set-up" class="section level2">
+<h2>Set-up</h2>
+<p>For this use case, we’ll be using some external packages: - the <code>ROCR</code> to compute the ROC at each node and to validate the AUC obtained; - the <code>pracma</code> package to compute the AUC using the trapezoidal method; - the <code>stats</code> package to create a linear model;</p>
+<p>The use case will consist of 3 nodes with horizontally partitioned data. A linear model will be trained with part of the data and tested at each node, generating a ROC curve for each.</p>
+<p>To compute the aggregated ROC, each node will have to provide: - the ROC (consisting of the false positive rate and true positive rate); - the thresholds/cutoffs used (in the same order as the ROC); - the total number of negative labels in the dataset; - the total number of samples in the dataset;</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ROCR)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>create_dataset <span class="ot">&lt;-</span> <span class="cf">function</span>(n){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  positive_labels <span class="ot">&lt;-</span> n <span class="sc">%/%</span> <span class="dv">2</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  negative_labels <span class="ot">&lt;-</span> n <span class="sc">-</span> positive_labels</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">0</span>, negative_labels), <span class="fu">rep</span>(<span class="dv">1</span>, positive_labels))</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  x1 <span class="ot">=</span> <span class="fu">rnorm</span>(n, <span class="dv">10</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  x2 <span class="ot">=</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(positive_labels, <span class="fl">2.5</span>, <span class="at">sd =</span> <span class="dv">2</span>), <span class="fu">rnorm</span>(negative_labels, <span class="dv">2</span>, <span class="at">sd =</span> <span class="dv">2</span>))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  x3 <span class="ot">=</span> y <span class="sc">*</span> <span class="fl">0.3</span> <span class="sc">+</span> <span class="fu">rnorm</span>(n, <span class="fl">0.2</span>, <span class="at">sd =</span> <span class="fl">0.3</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(x1, x2, x3, y)[<span class="fu">sample</span>(n, n), ]</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the dataset for each node</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>node_1 <span class="ot">&lt;-</span> <span class="fu">create_dataset</span>(<span class="fu">sample</span>(<span class="dv">300</span><span class="sc">:</span><span class="dv">400</span>, <span class="dv">1</span>))</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>node_2 <span class="ot">&lt;-</span> <span class="fu">create_dataset</span>(<span class="fu">sample</span>(<span class="dv">300</span><span class="sc">:</span><span class="dv">400</span>, <span class="dv">1</span>))</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>node_3 <span class="ot">&lt;-</span> <span class="fu">create_dataset</span>(<span class="fu">sample</span>(<span class="dv">300</span><span class="sc">:</span><span class="dv">400</span>, <span class="dv">1</span>))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Train a linear model on a subset</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>glm.fit <span class="ot">&lt;-</span> <span class="fu">glm</span>(</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> <span class="fu">rbind</span>(node_1, node_2),</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">family =</span> binomial,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>get_roc <span class="ot">&lt;-</span> <span class="cf">function</span>(dataset){</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  glm.probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(glm.fit,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                       <span class="at">newdata =</span> dataset,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  pred <span class="ot">&lt;-</span> <span class="fu">prediction</span>(glm.probs, <span class="fu">c</span>(dataset<span class="sc">$</span>y))</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  perf <span class="ot">&lt;-</span> <span class="fu">performance</span>(pred, <span class="st">&quot;tpr&quot;</span>, <span class="st">&quot;fpr&quot;</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  perf_p_r <span class="ot">&lt;-</span> <span class="fu">performance</span>(pred, <span class="st">&quot;prec&quot;</span>, <span class="st">&quot;rec&quot;</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fpr&quot;</span> <span class="ot">=</span> perf<span class="sc">@</span>x.values[[<span class="dv">1</span>]],</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tpr&quot;</span> <span class="ot">=</span> perf<span class="sc">@</span>y.values[[<span class="dv">1</span>]],</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;prec&quot;</span> <span class="ot">=</span> perf_p_r<span class="sc">@</span>y.values[[<span class="dv">1</span>]],</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;thresholds&quot;</span> <span class="ot">=</span> perf<span class="sc">@</span>alpha.values[[<span class="dv">1</span>]],</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;negative_count&quot;</span><span class="ot">=</span> <span class="fu">sum</span>(dataset<span class="sc">$</span>y <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;total_count&quot;</span> <span class="ot">=</span> <span class="fu">nrow</span>(dataset),</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;auc&quot;</span> <span class="ot">=</span> <span class="fu">performance</span>(pred, <span class="at">measure =</span> <span class="st">&quot;auc&quot;</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict and compute the ROC for each node</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>roc_node_1 <span class="ot">&lt;-</span> <span class="fu">get_roc</span>(node_1)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>roc_node_2 <span class="ot">&lt;-</span> <span class="fu">get_roc</span>(node_2)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>roc_node_3 <span class="ot">&lt;-</span> <span class="fu">get_roc</span>(node_3)</span></code></pre></div>
+</div>
+<div id="aggregating-the-roc-from-each-node" class="section level2">
+<h2>Aggregating the ROC from each node</h2>
+<p>Obtaining the required inputs from each node will allow us to compute the aggregated ROC and the corresponding AUC.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preparing the input</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> <span class="fu">list</span>(roc_node_1<span class="sc">$</span>fpr, roc_node_2<span class="sc">$</span>fpr, roc_node_3<span class="sc">$</span>fpr)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>tpr <span class="ot">&lt;-</span> <span class="fu">list</span>(roc_node_1<span class="sc">$</span>tpr, roc_node_2<span class="sc">$</span>tpr, roc_node_3<span class="sc">$</span>tpr)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  roc_node_1<span class="sc">$</span>thresholds, roc_node_2<span class="sc">$</span>thresholds, roc_node_3<span class="sc">$</span>thresholds)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>negative_count <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  roc_node_1<span class="sc">$</span>negative_count, roc_node_2<span class="sc">$</span>negative_count, roc_node_3<span class="sc">$</span>negative_count)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>total_count <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  roc_node_1<span class="sc">$</span>total_count, roc_node_2<span class="sc">$</span>total_count, roc_node_3<span class="sc">$</span>total_count)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the global ROC curve for the model</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>roc_aggregated <span class="ot">&lt;-</span> <span class="fu">roc_curve</span>(fpr, tpr, thresholds, negative_count, total_count)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the AUC</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="ot">&lt;-</span> <span class="fu">trapz</span>(roc_aggregated<span class="sc">$</span>fpr, roc_aggregated<span class="sc">$</span>tpr)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;ROC AUC aggregated from each node&#39;s results: %f&quot;</span>, roc_auc)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ROC AUC aggregated from each node&#39;s results: 0.778901&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the precision-recall</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>precision_recall_aggregated <span class="ot">&lt;-</span> <span class="fu">precision_recall_curve</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  fpr, tpr, thresholds, negative_count, total_count)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the precision-recall AUC</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>precision_recall_auc <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">trapz</span>(</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  precision_recall_aggregated<span class="sc">$</span>recall, precision_recall_aggregated<span class="sc">$</span>pre)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Precision-Recall AUC aggregated from each node&#39;s results: %f&quot;</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  precision_recall_auc</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Precision-Recall AUC aggregated from each node&#39;s results: 0.773897&quot;</span></span></code></pre></div>
+</div>
+<div id="validation" class="section level2">
+<h2>Validation</h2>
+<p>Using <code>ROCR</code> we can calculate the ROC and its AUC for the case of having all the data centrally available. The values between this and the aggregated ROC should match.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>roc_central_case <span class="ot">&lt;-</span> <span class="fu">get_roc</span>(<span class="fu">rbind</span>(node_1, node_2, node_3))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate the ROC AUC</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ROC AUC using ROCR with all the data centrally available: %f&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  roc_central_case<span class="sc">$</span>auc<span class="sc">@</span>y.values[[<span class="dv">1</span>]]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ROC AUC using ROCR with all the data centrally available: 0.778901&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate the precision-recall AUC</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>precision_recall_auc <span class="ot">&lt;-</span> <span class="fu">trapz</span>(</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  roc_central_case<span class="sc">$</span>tpr,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ifelse</span>(<span class="fu">is.nan</span>(roc_central_case<span class="sc">$</span>prec), <span class="dv">1</span>, roc_central_case<span class="sc">$</span>prec)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Precision-Recall AUC using ROCR with all the data centrally available: %f&quot;</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  precision_recall_auc</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Precision-Recall AUC using ROCR with all the data centrally available: 0.773897&quot;</span></span></code></pre></div>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>The ROC curve obtained can be visualized in the following way:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(roc_aggregated<span class="sc">$</span>fpr,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>     roc_aggregated<span class="sc">$</span>tpr,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&quot;ROC curve&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;False Positive Rate&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">&quot;True Positive Rate&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">cex=</span><span class="fl">0.3</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">&quot;blue&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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g5EewoYHq0LBS9MJXc8Ww4Qla9iHmEr86GhlMgLwWStEprYlsXwnpf9gasGjZf2cJOZZSSxvJpcXAWRy7wnvgoDhCIgS2vAOFPYFAZMREAFkcu8J74KA4QiIADK8A4V9QcBkBEQAmdx7wrsgYDgCIoAM70BhXxAwGQERQCb3nvAuCBiOgAggwztQ2BcETEZABJDJvSe8CwKGIyACyPAOFPYFAZMREAFkcu8J74KA4QiIADK8A4V9QcBkBEQAmdx7wrsgYDgCIoAM70BhXxAwGQERQCb3nvAuCBiOgAggwztQ2BcETEZABJDJvSe8CwKGIyACyPAOFPYFAZMREAFkcu8J74KA4QiIADK8A4V9QcBkBEQAmdx7wrsgYDgCIoAM70BhXxAwGQERQCb3nvAuCBiOgAggwztQ2BcETEZABJDJvSe8CwKGIyACyPAOFPYFAZMREAEUw95r2rQpcbz4sL9z585FxB3Hbdd1HDx4MKLySSl04MCBED7Tpk1LuXLlIrTju+++S0q1Ya/h2PNUsWJFO3/lypW0dOlS+zw4385IxoO77rorpM3p06enm266iVq0aEFJwTu4HcnIrpFVXWMk13HE9A033EBvvvmma4uuvfZa1/RYJj700EN09913axYuXryo490PGjSIGjRoQOvWraMiRYokC3t33HEHFShQwL5P9erVady4cXTnnXfqNGd+stwwTCU333wzDRs2zM49ffo0LViwgCZPnkzVqlWjbdu20TXXRPYaAa/gdtgVp9KDyJBLpeBEo9lZs2alNm3aRONWyXKPypUrh/Bbt25duu222+jTTz+lPn36JMt9OnbsaNejlCL8nOTMd6Yn9zH6ByMhJ2HEV6JECerVqxetWrWKIAwjIbd2RHJdPJeRKZgBvfvHH3/Qs88+S+XKlaNMmTJRyZIl9cP/+++/u3KPr/S///1vyps3L2XPnp3q1KmjXxRn4R9//FGPZJCPl+m5556jP//801kk4mOMEjAd2759u30Npku1atWi66+/Xtfft29fQjss8uLxtddeow4dOhDaePvtt+vLXn75ZbIEj5WPOmvUqEFjx461qtb/jxw5QpUqVaL58+fr87Nnz1K3bt30CA3TxiZNmtDevXsDrknMya233qqLox0W7dq1i5o3b06FCxemzJkz6ynkpEmTdHa4diATIzsIcFxTpUoVmjlz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" /><!-- --></p>
+</div>
+<div id="appendix" class="section level2">
+<h2>Appendix</h2>
+<div id="using-proc-library" class="section level3">
+<h3>Using pROC library</h3>
+<p>Another popular package to compute ROC curves is the <code>pROC</code>. Similarly to the example with the <code>ROCR</code> package, it’s also possible to aggregate the results from ROC curves computed with the <code>pROC package</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pROC, <span class="at">warn.conflicts =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Type &#39;citation(&quot;pROC&quot;)&#39; for a citation.</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>get_proc <span class="ot">&lt;-</span> <span class="cf">function</span>(dataset){</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  glm.probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(glm.fit,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">newdata =</span> dataset,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">type =</span> <span class="st">&quot;response&quot;</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  roc_obj <span class="ot">&lt;-</span> <span class="fu">roc</span>(<span class="fu">c</span>(dataset<span class="sc">$</span>y), <span class="fu">c</span>(glm.probs))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fpr&quot;</span> <span class="ot">=</span> <span class="dv">1</span> <span class="sc">-</span> roc_obj<span class="sc">$</span>specificities,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tpr&quot;</span> <span class="ot">=</span> roc_obj<span class="sc">$</span>sensitivities,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;thresholds&quot;</span> <span class="ot">=</span> roc_obj<span class="sc">$</span>thresholds,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;negative_count&quot;</span><span class="ot">=</span> <span class="fu">sum</span>(dataset<span class="sc">$</span>y <span class="sc">==</span> <span class="dv">0</span>),</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;total_count&quot;</span> <span class="ot">=</span> <span class="fu">nrow</span>(dataset),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;auc&quot;</span> <span class="ot">=</span> roc_obj<span class="sc">$</span>auc</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>roc_obj_node_1 <span class="ot">&lt;-</span> <span class="fu">get_proc</span>(node_1)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting levels: control = 0, case = 1</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>roc_obj_node_2 <span class="ot">&lt;-</span> <span class="fu">get_proc</span>(node_2)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting levels: control = 0, case = 1</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>roc_obj_node_3 <span class="ot">&lt;-</span> <span class="fu">get_proc</span>(node_3)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting levels: control = 0, case = 1</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Preparing the input</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>fpr <span class="ot">&lt;-</span> <span class="fu">list</span>(roc_obj_node_1<span class="sc">$</span>fpr, roc_obj_node_2<span class="sc">$</span>fpr, roc_obj_node_3<span class="sc">$</span>fpr)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>tpr <span class="ot">&lt;-</span> <span class="fu">list</span>(roc_obj_node_1<span class="sc">$</span>tpr, roc_obj_node_2<span class="sc">$</span>tpr, roc_obj_node_3<span class="sc">$</span>tpr)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>thresholds <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  roc_obj_node_1<span class="sc">$</span>thresholds, roc_obj_node_2<span class="sc">$</span>thresholds, roc_obj_node_3<span class="sc">$</span>thresholds)</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>negative_count <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  roc_obj_node_1<span class="sc">$</span>negative_count, roc_obj_node_2<span class="sc">$</span>negative_count, roc_obj_node_3<span class="sc">$</span>negative_count)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>total_count <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>  roc_obj_node_1<span class="sc">$</span>total_count, roc_obj_node_2<span class="sc">$</span>total_count, roc_obj_node_3<span class="sc">$</span>total_count)</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the global ROC curve for the model</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>roc_aggregated <span class="ot">&lt;-</span> <span class="fu">roc_curve</span>(fpr, tpr, thresholds, negative_count, total_count)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the AUC</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>roc_auc <span class="ot">&lt;-</span> <span class="fu">trapz</span>(roc_aggregated<span class="sc">$</span>fpr, roc_aggregated<span class="sc">$</span>tpr)</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(<span class="st">&quot;ROC AUC aggregated from each node&#39;s results: %f&quot;</span>, roc_auc)</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ROC AUC aggregated from each node&#39;s results: 0.778901&quot;</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Validate the ROC AUC</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>roc_central_case <span class="ot">&lt;-</span> <span class="fu">get_proc</span>(<span class="fu">rbind</span>(node_1, node_2, node_3))</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting levels: control = 0, case = 1</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Setting direction: controls &lt; cases</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="fu">sprintf</span>(</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ROC AUC using pROC with all the data centrally available: %f&quot;</span>,</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>  roc_central_case<span class="sc">$</span>auc</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;ROC AUC using pROC with all the data centrally available: 0.778901&quot;</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
